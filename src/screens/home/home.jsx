@@ -6,7 +6,7 @@ export const HomeScreen = ({ navigation }) => {
   return (
     <Container>
       <View style={styles.logoContainer}>
-        <Image 
+        {/* <Image 
           source={require('../../../assets/icon.png')}
           style={styles.logo}
           resizeMode="contain"
@@ -15,7 +15,7 @@ export const HomeScreen = ({ navigation }) => {
           source={{ uri: 'https://imagen/imagen.jpeg' }}
           style={styles.bannerImage}
           resizeMode="cover"
-        />
+        /> */}
       </View>
 
       <View style={styles.contentContainer}>
