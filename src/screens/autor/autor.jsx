@@ -4,13 +4,16 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Container } from "../../components/container/container";
 import { Card } from "../../components/card/card";
 import { EDPOINTS } from "../../config/api";
+import { apiFetch } from "../../services/api";
 
 export const AutorScreen = ({ navigation }) => {
   const [autores, setAutores] = useState([]);
 
   const getAutores = async () => {
     try {
-      const response = await fetch(EDPOINTS.AUTOR);
+      const response = await apiFetch(EDPOINTS.AUTOR,{
+        method:"GET",
+      });
       const json = await response.json();
       setAutores(json);
     } catch (error) {
