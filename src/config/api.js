@@ -1,4 +1,4 @@
-const BASE_URL = "http://10.41.1.22:3000";
+const BASE_URL = "http://192.168.100.80:3000";
 
 export const EDPOINTS = {
     AUTOR: `${BASE_URL}/autor`,

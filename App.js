@@ -1,31 +1,50 @@
-import { StyleSheet } from 'react-native';
-import { HomeScreen } from './src/screens/home/home';
-import { AutorScreen } from './src/screens/autor/autor';
-import { LibroScreen } from './src/screens/libro/libro';
-import { AutorFormScreen } from './src/screens/autor/autor-form';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-
-const Stack = createStackNavigator();
+import { useEffect, useState, useMemo } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { AppStack } from "./src/navigation/appStack.js";
+import { AuthStack } from "./src/navigation/authStack";
+import { getToken, saveToken, removeToken } from "./src/services/auth.js";
+import { AuthContext } from "./src/context/AuthContext";
 
 export default function App() {
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const t = await getToken();
+        setToken(t);
+      } catch (error) {
+        console.log("Error getToken:", e);
+        setToken(null);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const auth = useMemo(
+    () => ({
+      token,
+      signIn: async (newToken) => {
+        await saveToken(newToken);
+        setToken(newToken);
+      },
+      signOut: async () => {
+        await removeToken();
+        setToken(null);
+      },
+    }),
+    [token],
+  );
+
+  if (loading) return null; // recomendado para evitar parpadeos
+
   return (
-    <NavigationContainer>
-        <Stack.Navigator>
-            <Stack.Screen name='Home' component={HomeScreen} options={{title:"Inicio"}}/>
-            <Stack.Screen name='Autor' component={AutorScreen} />
-            <Stack.Screen name='Libro' component={LibroScreen}/>
-            <Stack.Screen name='AutorForm' component={AutorFormScreen} options={{title:"Crear Autor"}}/>
-        </Stack.Navigator>
-    </NavigationContainer>
+    <AuthContext.Provider value={auth}>
+      <NavigationContainer>
+        {token ? <AppStack /> : <AuthStack />}
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
